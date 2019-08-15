@@ -15,7 +15,7 @@ void set_size_hints(Display * display, Window window, int x, int y, int width, i
     //size_hints structure is filled with the size hints now
 
     //set the size hints now
-    XSetWMHints(display, window, &size_hints);
+    XSetSizeHints(display, window, &size_hints);
 }
 
 //the "other function" called fill_size_hints
