@@ -20,6 +20,7 @@ Display * connect_to_server(char * display_name, int *screen, Window * root_wind
     *screen = DefaultScreen(display);
 
     //get the root window ID
+    //get the root window ID
 
     *root_window = RootWindow(display, *screen);
 
