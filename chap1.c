@@ -27,8 +27,8 @@ int main(int argc, char **argv)
     //create a window on the display, put the geometry
     x = 100;
     y = 100;
-    width = 800;
-    height = 800;
+    width = 300;
+    height = 300;
     window = open_window(display, root_window, x, y, width, height, BlackPixel(display, screen), WhitePixel(display, screen), ExposureMask, visual);
 
     set_standard_hints(display, window, argv[0], argv[0], x, y, height, width);
