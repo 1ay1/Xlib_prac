@@ -1,53 +1,60 @@
 #include "connect.h"
+#include "size_hints.h"
+#include "wm_hints.h"
+#include "window.h"
 
-void print_x_info(Display *dis, int screen)
+
+int main(int argc, char **argv)
 {
-    //server version and vendor release
-    printf("%s version %d of the %s\n", ServerVendor(dis), VendorRelease(dis), "X Window System");
+    //connect to the display ( server)
+    Display *display;
+    //get the motherfucking window
+    Window root_window, window;
+    //get the screen of that display you are gonna open
+    int screen;
 
-    //info on the protocol version and revision
-    printf("X Protocol %d.%d\n", ProtocolVersion(dis), ProtocolRevision(dis));
+    //get the size fucking hints
+    int x, y , width, height;
+    //visual, we will get that from the parent
+    Visual *visual = CopyFromParent;
+    //get the XEvent structure
+    XEvent event;
+    int count; //for the event loop
 
-    //depth
-    int depth;
-    depth = DefaultDepth(dis, screen);
-    if(depth == 1) {
-        printf("Color plane depth ...... %d (MONO)\n", depth);
-    } else {
-        printf("Color plane depth ... %d\n", depth);
+    //connect to the X Server
+    display = connect_to_server((char *) NULL, &screen, &root_window);
+
+    //create a window on the display, put the geometry
+    x = 100;
+    y = 100;
+    width = 800;
+    height = 800;
+    window = open_window(display, root_window, x, y, width, height, BlackPixel(display, screen), WhitePixel(display, screen), ExposureMask, visual);
+
+    set_standard_hints(display, window, argv[0], argv[0], x, y, height, width);
+
+    XMapRaised(display, window);
+    XFlush(display);
+
+//    XGrabKeyboard(display, window, True, GrabModeAsync, GrabModeAsync, CurrentTime);
+
+
+//    while (1);
+
+    //event loop
+    count = 0;
+    while (count < 20)
+    {
+        XNextEvent(display, &event);
+        if(event.type == Expose)
+        {
+            count++;
+            printf("For Expose event %d,", count);
+            printf("the area is: \n");
+            printf("\tAt %d,%d," ,event.xexpose.x, event.xexpose.y);
+            printf(" %d pixels wide, %d high\n", event.xexpose.width, event.xexpose.height);
+        }
     }
 
-
-    //get the size of screen in pixels
-    printf("Display Width ... %d pixels.\n", DisplayWidth(dis, screen));
-    printf("Display Height ... %d pixels.\n", DisplayHeight(dis, screen));
-
-    // Black and White preallocated codes
-
-    printf("Black ....... %ld\n", BlackPixel(dis, screen));
-    printf("White ....... %ld\n", WhitePixel(dis, screen));
-
-    //get the name of the display usually unix:0
-
-    char *len = malloc(10);
-    gethostname(len, 10);
-    printf("For the display [%s%s]\n", len  ,XDisplayName((char * )NULL));
-}
-
-int main()
-{
-    //connect to the server(display)
-    Display *display;
-    Window rootwindow;
-    int screen;
-    //use the connection function
-    display = connect_to_server((char *)NULL, &screen, &rootwindow);
-
-
-    /*get and print the info about the X server
-     */
-
-    print_x_info(display, screen);
-
-    return 0;
+    XCloseDisplay(display);
 }
