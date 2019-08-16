@@ -3,6 +3,22 @@
 #include "wm_hints.h"
 #include "window.h"
 
+/* Code of GC(Graphics context).C*/
+GC create_gc(Display * display, Drawable drawable, unsigned long forecolor, unsigned long backcolor)
+{
+    //create the GCValues structures
+    XGCValues xgcvalues;
+    GC gc;
+
+    xgcvalues.foreground = forecolor;
+    xgcvalues.background = backcolor;
+    xgcvalues.line_width = 5;
+
+    gc = XCreateGC(display, drawable, (GCForeground | GCBackground | GCLineWidth), &xgcvalues);
+
+    return gc;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -33,6 +49,10 @@ int main(int argc, char **argv)
 
     set_standard_hints(display, window, argv[0], argv[0], x, y, height, width);
 
+    //creating the gc for the window
+    GC gc;
+    gc = create_gc(display,  window, BlackPixel(display, screen), WhitePixel(display, screen));
+
     XMapRaised(display, window);
     XFlush(display);
 
@@ -42,12 +62,12 @@ int main(int argc, char **argv)
 //    while (1);
 
     //event loop
-    count = 0;
-    while (count < 20)
+    while (1)
     {
         XNextEvent(display, &event);
         if(event.type == Expose)
         {
+            XDrawRectangle(display, window, gc,100, 100, 400, 300);
             count++;
             printf("For Expose event %d,", count);
             printf("the area is: \n");

@@ -8,7 +8,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-#define BORDER_WIDTH 2
+#define BORDER_WIDTH 5
 #define APP_CLASS "Examples"
 
 
