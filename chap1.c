@@ -2,6 +2,12 @@
 #include "size_hints.h"
 #include "wm_hints.h"
 #include "window.h"
+#include <time.h>
+#include <unistd.h>
+
+//constant angles for archs
+#define START_ANGLE 0
+#define PATH_ANGLE 360*64
 
 /* Code of GC(Graphics context).C*/
 GC create_gc(Display * display, Drawable drawable, unsigned long forecolor, unsigned long backcolor)
@@ -12,7 +18,7 @@ GC create_gc(Display * display, Drawable drawable, unsigned long forecolor, unsi
 
     xgcvalues.foreground = forecolor;
     xgcvalues.background = backcolor;
-    xgcvalues.line_width = 5;
+    xgcvalues.line_width = 2;
 
     gc = XCreateGC(display, drawable, (GCForeground | GCBackground | GCLineWidth), &xgcvalues);
 
@@ -43,8 +49,8 @@ int main(int argc, char **argv)
     //create a window on the display, put the geometry
     x = 100;
     y = 100;
-    width = 300;
-    height = 300;
+    width = 500;
+    height = 500;
     window = open_window(display, root_window, x, y, width, height, BlackPixel(display, screen), WhitePixel(display, screen), ExposureMask, visual);
 
     set_standard_hints(display, window, argv[0], argv[0], x, y, height, width);
@@ -62,12 +68,22 @@ int main(int argc, char **argv)
 //    while (1);
 
     //event loop
-    while (1)
+    Bool running = True;
+    int arc_h = 100;
+    int arc_w = 100;
+    count = 0;
+    while (running)
     {
         XNextEvent(display, &event);
         if(event.type == Expose)
         {
-            XDrawRectangle(display, window, gc,100, 100, 400, 300);
+            for(int i = 0; i < 1000; i++)
+            {
+                XDrawLine(display, window, gc, rand()%400, rand()%400, rand()%400 +100, 100+rand()*400);
+                usleep(100000);
+                XSync(display, True);
+            }
+//            XDrawArc(display, window, gc, 100, 100, 400, 200, START_ANGLE, PATH_ANGLE);
             count++;
             printf("For Expose event %d,", count);
             printf("the area is: \n");

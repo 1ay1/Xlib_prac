@@ -20,8 +20,8 @@ Window open_window(Display *display, Window parent, int x, int y, int width, int
     attr_mask = CWEventMask | CWBorderPixel | CWBackPixel;
 
     //override the WM
-//    attributes.override_redirect = True;
-//    attr_mask |= CWOverrideRedirect;
+    attributes.override_redirect = True;
+    attr_mask |= CWOverrideRedirect;
 
     //done with the attributes, create the motherfucking window now
     window = XCreateWindow(display, parent, x, y, width, height, BORDER_WIDTH, CopyFromParent, InputOutput, visual, attr_mask, &attributes);
