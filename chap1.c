@@ -25,6 +25,15 @@ GC create_gc(Display * display, Drawable drawable, unsigned long forecolor, unsi
     return gc;
 }
 
+unsigned  long set_color_from_hex(Display *display, Window  window, Visual *visual, Colormap  *color_map, char * hex)
+{
+
+    XColor xblue;
+//    XAllocNamedColor(display, color_map, "blue", &xblue, &xblue);
+    XParseColor(display, *color_map, hex, &xblue);
+    XAllocColor(display, *color_map, &xblue);
+    return  xblue.pixel;
+}
 
 int main(int argc, char **argv)
 {
@@ -67,6 +76,23 @@ int main(int argc, char **argv)
 
 //    while (1);
 
+    visual = DefaultVisual(display, screen);
+    if(visual->class == TrueColor){;}
+    Colormap color_map = XCreateColormap(display, window, visual, AllocNone );
+    XSetWindowColormap(display, window, color_map);
+
+    unsigned  long color1 = set_color_from_hex(display, window, visual, &color_map, "#b90000");
+    unsigned  long color2 = set_color_from_hex(display, window, visual, &color_map, "#b9f100");
+    XSetWindowBackground(display, window, color1);
+    XClearArea(display, window, 0,0,0,0, True);
+    XSetWindowBorder(display, window, color1);
+    XSetForeground(display, gc, color2);
+
+    XFlush(display);
+    {
+        puts("Ya, default is Truecolor!");
+    }
+
     //event loop
     Bool running = True;
     int arc_h = 100;
@@ -79,9 +105,14 @@ int main(int argc, char **argv)
         {
             for(int i = 0; i < 1000; i++)
             {
-                XDrawLine(display, window, gc, rand()%400, rand()%400, rand()%400 +100, 100+rand()*400);
-                usleep(100000);
                 XSync(display, True);
+                XFillRectangle(display, window, gc, 40, 40, 400, 400);
+                XFlush(display);
+                usleep(100000);
+                XClearArea(display, window, 0,0,0,0,False);
+                XFlush(display);
+                usleep(100000);
+
             }
 //            XDrawArc(display, window, gc, 100, 100, 400, 200, START_ANGLE, PATH_ANGLE);
             count++;
