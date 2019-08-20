@@ -14,6 +14,6 @@ link_directories(${x11_LIBRARY_DIRS})
 add_definitions(${x11_CFLAGS_OTHER})
 
 
-add_executable(untitled3 chap1.c connect.c connect.h size_hints.c size_hints.h wm_hints.c wm_hints.h window.c window.h)
+add_executable(untitled3 chap1.c connect.c connect.h size_hints.c size_hints.h wm_hints.c wm_hints.h window.c window.h loadfont.c loadfont.h)
 
 target_link_libraries(untitled3 ${x11_LIBRARIES})

@@ -4,8 +4,6 @@
 #include "window.h"
 #include <time.h>
 #include <unistd.h>
-#include "loadfont.h"
-#include <string.h>
 
 //constant angles for archs
 #define START_ANGLE 0
@@ -27,8 +25,6 @@ GC create_gc(Display * display, Drawable drawable, unsigned long forecolor, unsi
     return gc;
 }
 
-
-//getting the color unsigned long from the Colormap and Visual Truecolor
 unsigned  long set_color_from_hex(Display *display, Window  window, Visual *visual, Colormap  *color_map, char * hex)
 {
 
@@ -78,21 +74,15 @@ int main(int argc, char **argv)
 //    XGrabKeyboard(display, window, True, GrabModeAsync, GrabModeAsync, CurrentTime);
 
 
-
-
 //    while (1);
 
-    visual = DefaultVisual(display, screen);
+    //setting up visual the hard way
 
-    XVisualInfo vis_info;
+    XVisualInfo *vis_info;
 
-    XMatchVisualInfo(display, screen, 24, TrueColor, &vis_info );
-
-    if(vis_info.class == TrueColor)
-    {
-        puts("Yup it was truecolor!");
-    }
-
+    V
+    
+    //visual = DefaultVisual(display, screen);
     if(visual->class == TrueColor){;}
     Colormap color_map = XCreateColormap(display, window, visual, AllocNone );
     XSetWindowColormap(display, window, color_map);
@@ -109,16 +99,6 @@ int main(int argc, char **argv)
         puts("Ya, default is Truecolor!");
     }
 
-    //font shit, get the font set up using "load_font.h"
-
-    XFontStruct *font_info;
-    font_info = load_font(display, &gc, "-*-lucida-*-r-*-*-*-*-*-300-*-300-*-*");
-
-    //font string
-
-    char string_to_dra[] = "Hack Stuff!";
-    int str_len = strlen(string_to_dra);
-
     //event loop
     Bool running = True;
     int arc_h = 100;
@@ -129,18 +109,17 @@ int main(int argc, char **argv)
         XNextEvent(display, &event);
         if(event.type == Expose)
         {
-            for(;;){
+            for(int i = 0; i < 1000; i++)
+            {
                 XSync(display, True);
-                XDrawString(display, window, gc, 40, 100, string_to_dra, str_len);
+                XFillRectangle(display, window, gc, 40, 40, 400, 400);
                 XFlush(display);
                 usleep(100000);
                 XClearArea(display, window, 0,0,0,0,False);
-                XFlush(display); //after anychange in the screen using this is important, just like the wrefresh(); in Ncurses
+                XFlush(display);
                 usleep(100000);
 
             }
-
-            XFlush(display);
 //            XDrawArc(display, window, gc, 100, 100, 400, 200, START_ANGLE, PATH_ANGLE);
             count++;
             printf("For Expose event %d,", count);
